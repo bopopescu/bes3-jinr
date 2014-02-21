@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Extended status checker for StoRM frontend server
+
+
+init_script=/etc/init.d/storm-frontend-server
+script_body=`cat ${init_script}`
+
+get_conf_value() {
+    echo "${script_body}" | grep "${1}=" | cut -f 2 -d '=' | tr -d '\n "'
+}
+
+prog=$(get_conf_value "prog")
+PIDDIR=$(get_conf_value "PIDDIR")
+eval PIDFILE=$(get_conf_value "PIDFILE")
+
+service=$prog
+
+# Result:
+# 0 - running
+# 1 - not running
+# 20 - not running, but have to
+get_status() {
+    should_be_running=0
+    [ -f ${PIDFILE} ] && should_be_running=1
+
+    /sbin/service ${service} status >/dev/null 2>&1
+    # 0 - running, 1 - stopped
+    is_stopped=$?
+
+    [[ $is_stopped -eq 0 ]]        && return 0  # OK, running; return now
+    [[ $should_be_running -eq 0 ]] && return 1  # OK, not running
+    [[ $should_be_running -ne 0 ]]   && return 20 # NOT OK, should be running but is not
+}
+
+get_status
+status=$?
+
+# silent mode
+[ "$1" == "-silent" ] && exit ${status}
+
+case "${status}" in
+    "0")
+        PID=`cat $PIDFILE`
+        echo "$service (pid $PID) is running..."
+        ;;
+    "1")
+        echo "$service is NOT running"
+        ;;
+    "20")
+        echo "$service is DEAD, but pid file exist ($PIDFILE)"
+        ;;
+esac
+
+exit ${status}

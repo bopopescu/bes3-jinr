@@ -1,0 +1,8 @@
+/var/log/storm/supervision.log {
+    missingok
+    notifempty
+    nocreate
+    rotate 90
+    compress
+    delaycompress
+}

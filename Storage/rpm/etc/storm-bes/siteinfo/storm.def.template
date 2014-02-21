@@ -1,0 +1,89 @@
+##############################################################################
+# Copyright (c) Members of the EGEE Collaboration. 2004. 
+# See http://www.eu-egee.org/partners/ for details on the copyright 
+# holders.  
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+#
+#    http://www.apache.org/licenses/LICENSE-2.0 
+#
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS 
+# OF ANY KIND, either express or implied. 
+# See the License for the specific language governing permissions and 
+# limitations under the License.
+##############################################################################
+
+###################################
+# General configuration variables #
+###################################
+
+BDII_HOST="no-host-needed"
+USERS_CONF="???"
+GROUPS_CONF="???"
+ENABLE_MPI=no
+# SPECIAL_POOL_ACCOUNTS=yes or no
+
+JAVA_LOCATION="/usr/lib/jvm/java"
+
+################################
+# Site configuration variables #
+################################
+
+MY_DOMAIN="???"
+SITE_NAME="???"
+SITE_LAT=0.0
+SITE_LONG=0.0
+NTP_HOSTS_IP="???"
+
+#################################
+
+# StoRM configuration variables #
+#################################
+
+MYSQL_PASSWORD="???"
+
+VOS="bes"
+STORM_STORAGEAREA_LIST="$VOS"
+
+STORM_BACKEND_HOST="???"
+
+STORM_BDII_OVERWRITE="false"
+STORM_DB_HOST=$STORM_BACKEND_HOST
+STORM_DB_PWD="???"
+
+STORM_DEFAULT_ROOT="/besfs"
+STORM_FE_BE_XMLRPC_HOST=$STORM_BACKEND_HOST
+STORM_FRONTEND_HOST_LIST=$STORM_BACKEND_HOST
+STORM_FRONTEND_PUBLIC_HOST=$STORM_BACKEND_HOST
+
+STORM_GRIDFTP_POOL_LIST=${STORM_BACKEND_HOST}
+STORM_GRIDHTTP_POOL_LIST=${STORM_BACKEND_HOST}
+STORM_GRIDHTTPS_POOL_LIST=${STORM_BACKEND_HOST}
+SE_TYPE="disk"
+SE_LIST=$STORM_FRONTEND_PUBLIC_HOST
+
+GRIDFTP_WITH_DSI="yes"
+GRIDFTP_CONNECTIONS_MAX="2000"
+
+#STORM_ENDPOINT_QUALITY_LEVEL=2
+#STORM_ENDPOINT_SERVING_STATE=4
+
+STORM_FE_ENABLE_VOMSCHECK=true
+STORM_FE_ENABLE_MAPPING=true
+
+STORM_FE_MONITORING_ENABLED=true
+#STORM_FE_MONITORING_TIME_INTERVAL=60
+#STORM_FE_MONITORING_DETAILED=false
+
+STORM_BE_XMLRPC_TOKEN="???"
+
+GLOBUS_TCP_PORT_RANGE="50000,55000"
+
+
+STORM_BES_ONLINE_SIZE="???"
+STORM_BES_VONAME="bes"
+STORM_BES_DEFAULT_ACL_LIST="bes:RW"

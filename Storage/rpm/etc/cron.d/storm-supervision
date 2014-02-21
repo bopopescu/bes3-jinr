@@ -1,0 +1,16 @@
+SHELL=/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+LOGFILE=/var/log/storm/supervision.log
+
+MSG_NOT_RUNNING=" is not running but have to. Will be restarted. \nDetails: "
+
+
+* * * * * root  output=$(/usr/sbin/storm-frontend-server_status 2>&1); code=$?; [ $code -eq 20 ] && (echo -e "[`date -R`] storm-frontend-server: $MSG_NOT_RUNNING '${output}'" && /sbin/service storm-frontend-server restart) | tee -a $LOGFILE | mail -s "StoRM service checker" $MAILTO
+
+# note : init.s script is fool and returns no useful exit code, so parsing output
+* * * * * root  output=$(/sbin/service storm-backend-server status 2>&1); echo $output | grep "dead but" >/dev/null 2>&1; no_warn=$?; [ $no_warn -eq 0 ] && (echo -e "[`date -R`] storm-backend-server: $MSG_NOT_RUNNING '${output}'" && /sbin/service storm-backend-server restart) | tee -a $LOGFILE | mail -s "StoRM service checker" $MAILTO
+
+* * * * * root  output=$(/sbin/service storm-globus-gridftp status 2>&1); code=$?; [ $code -ne 0 ] && [ $code -ne 3 ] && (echo -e "[`date -R`] storm-globus-gridftp: $MSG_NOT_RUNNING '${output}'" && /sbin/service storm-globus-gridftp restart) | tee -a $LOGFILE | mail -s "StoRM service checker" $MAILTO
+
