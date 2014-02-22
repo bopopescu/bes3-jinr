@@ -1,9 +1,13 @@
 * Tue Oct 29 2013 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.0
 - First release of the package
 
-* Fri Feb 07 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.1-0
+* Fri Feb 07 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.1-1
 - Added SE service supervision
 - Dependencies: ntp and java7
 
-* Thu Feb 20 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.1-1
+* Thu Feb 20 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.1-2
 - Added support of configuration parameter STORM_BE_XMLRPC_TOKEN mandatory for StoRM 1.11.3
+
+* Sat Feb 22 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.1-3
+- DN of IHEP CA updated to the current one
+
