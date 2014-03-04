@@ -56,6 +56,7 @@ Tools to configure installation of StoRM specific to BES VO
 %defattr(-,root,root,-)
 /etc/logrotate.d/*
 /etc/cron.d/*
+/etc/security/limits.d/*
 /etc/storm-bes/*
 /usr/sbin/*
 
