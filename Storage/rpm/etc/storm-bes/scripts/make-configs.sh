@@ -38,7 +38,7 @@ fi
 # Setting default values for non-initialized parameters
 
 if [ -z "$NTP_HOSTS_IP_" ]; then
-    NTP_HOSTS_IP_="131.154.1.103 193.206.144.10"
+    NTP_HOSTS_IP_="202.112.31.197 218.75.4.130 114.113.198.166 202.112.10.36"
 fi 
 
 if [ -z "$MYSQL_PASSWORD" ]; then
@@ -123,6 +123,6 @@ cat "$MAIN_CONFIG.template" | \
 chmod 750 $MAIN_CONFIG
 
 echo
-echo "To configure service, run 'bash $SCRIPT_DIR/configure-service.sh'"
+echo "To configure service, please run 'bash $SCRIPT_DIR/configure-service.sh'"
 echo
 
