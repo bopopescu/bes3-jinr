@@ -17,9 +17,10 @@ myreplace() {
     cat | sed "s/$a/$b/g"
 }
 
-# Read parameter value from main configuration file
+# Read parameter value from configuration file (main one by default)
 get_config_value() {
-    local val=`grep "$1=" "$MAIN_CONFIG" | cut -f 2 -d '=' | tr -d '\n"' `
+    local config=${2:-$MAIN_CONFIG}
+    local val=`grep "$1=" "$config" | cut -f 2 -d '=' | tr -d '\n"' `
     read  -rd '' val <<< "$val" # trimming leading and trailing spaces
     echo $val
 }
@@ -50,7 +51,11 @@ if [ -z "$STORM_DB_PWD" ]; then
 fi
 
 if [ -z "$STORM_BES_ONLINE_SIZE_" ]; then
-    STORM_BES_ONLINE_SIZE_="1"
+    bes_storage_area=`get_config_value STORM_DEFAULT_ROOT $MAIN_CONFIG.template`
+    if [ -d $bes_storage_area ]; then
+        sa_size_gb=`df -BG $bes_storage_area | tail -1 | awk '{print $2}' | tr -d "G"`
+    fi
+    STORM_BES_ONLINE_SIZE_=${sa_size_gb:-"1"}
 fi
 
 if [ -z "$STORM_BE_XMLRPC_TOKEN" ]; then

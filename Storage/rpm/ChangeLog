@@ -12,4 +12,9 @@
 - DN of IHEP CA updated to the current one
 
 * Tue Mar 04 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.1-4
-- Limits on opened files for user storm set to 8192 as recommended by StoRM developers for 1.11.3.
+- Limits on opened files for user storm set to 8192 as recommended by StoRM developers for 1.11.3
+
+* Mon Mar 10 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.2-1
+- Added support of GridHTTPs and WebDAV to configuration
+- Storage access rights fixing (for pre-existing storage dir)
+- Default time servers changed to Chineese ones

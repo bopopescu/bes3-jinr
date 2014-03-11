@@ -23,6 +23,7 @@ Requires:       ca-policy-egi-core
 Requires:       emi-storm-backend-mp
 Requires:       emi-storm-frontend-mp
 Requires:       emi-storm-globus-gridftp-mp
+Requires:       emi-storm-gridhttps-mp
 
 Requires:       acl
 Requires:       attr
@@ -31,7 +32,7 @@ Requires:       java7
 
 
 %description
-Tools to configure installation of StoRM specific to BES VO
+Tools to configure installation of StoRM specific to BES VO.
 
 %prep
 %setup -q -n %{packagename}-%{version}
@@ -48,9 +49,9 @@ Tools to configure installation of StoRM specific to BES VO
 %{__cp} -r usr/* -t %{buildroot}/usr/
 
 
-
 %clean
 %{__rm} -rf %{buildroot}
+
 
 %files
 %defattr(-,root,root,-)
