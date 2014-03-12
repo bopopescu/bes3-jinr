@@ -16,6 +16,10 @@ fi
 # From StoRM's guide:
 # "YAIM-StoRM doesn't set the correct permissions if the SA's root directory already exists"
 if [ -d "$BES_STORAGE_AREA" ]; then
+    if ! id -u storm >/dev/null 2>&1; then
+        echo "User 'storm' does not exist, creating"
+        useradd -M storm
+    fi
     chown -RL storm:storm $BES_STORAGE_AREA
     chmod -R o-rwx,g+r $BES_STORAGE_AREA
 fi
