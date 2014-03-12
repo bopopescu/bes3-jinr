@@ -25,6 +25,33 @@ if [ -d "$BES_STORAGE_AREA" ]; then
 fi
 
 
-/opt/glite/yaim/bin/yaim -c -d 6 -s /etc/storm-bes/siteinfo/storm.def -n se_storm_backend -n se_storm_frontend -n se_storm_gridftp -n se_storm_gridhttps 2>&1
+/opt/glite/yaim/bin/yaim -c -d 6 -s /etc/storm-bes/siteinfo/storm.def -n se_storm_backend -n se_storm_frontend -n se_storm_gridftp 2>&1
+
+if [ $? -ne 0 ]; then
+    exit $?
+fi
 
 
+httpd_groups=`groups apache | cut -f 2 -d ":"`
+
+if [[ ! $httpd_groups =~ "bes" ]]; then
+    echo "User 'apache' isn't in 'bes' group, adding it there."
+    usermod -a -G bes apache
+fi
+
+if [[ ! $httpd_groups =~ "storm" ]]; then
+    echo "User 'apache' isn't in 'storm' group, adding it there."
+    usermod -a -G storm apache
+fi
+
+
+echo "Restarting httpd server to enable WebDAV access"
+
+chkconfig httpd on
+service httpd restart
+
+echo
+echo "Alias warnings could be safely ignored."
+echo
+echo "Configuration is done, now you could check the service itself."
+echo

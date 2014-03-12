@@ -23,12 +23,15 @@ Requires:       ca-policy-egi-core
 Requires:       emi-storm-backend-mp
 Requires:       emi-storm-frontend-mp
 Requires:       emi-storm-globus-gridftp-mp
-Requires:       emi-storm-gridhttps-mp
 
 Requires:       acl
 Requires:       attr
 Requires:       ntp
 Requires:       java7
+Requires:       httpd
+
+Conflicts:      emi-storm-gridhttps-mp
+Conflicts:      storm-gridhttps-server
 
 
 %description
@@ -57,6 +60,7 @@ Tools to configure installation of StoRM specific to BES VO.
 %defattr(-,root,root,-)
 /etc/logrotate.d/*
 /etc/cron.d/*
+/etc/httpd/conf.d/*
 /etc/security/limits.d/*
 /etc/storm-bes/*
 /usr/sbin/*
