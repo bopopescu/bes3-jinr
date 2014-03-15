@@ -1,0 +1,14 @@
+NameVirtualHost *:443
+
+<VirtualHost *:443>
+    SSLEngine               on
+    SSLCertificateFile      /etc/grid-security/hostcert.pem
+    SSLCertificateKeyFile   /etc/grid-security/hostkey.pem
+    SSLCACertificatePath    /etc/grid-security/certificates
+    SSLCARevocationPath     /etc/grid-security/certificates
+    SSLVerifyClient         require
+    SSLVerifyDepth          10
+    SSLOptions              +ExportCertData +StdEnvVars
+
+    Include conf.d/bes-webdav/common.webdav.include
+</VirtualHost>

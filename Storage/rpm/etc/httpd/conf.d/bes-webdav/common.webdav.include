@@ -1,0 +1,28 @@
+
+Alias /icons/ "/var/www/icons/"
+Alias /error/ "/var/www/error/"
+
+Alias / "/besfs/"
+
+<Location />
+    DAV On
+
+    Options None +Indexes
+
+    <Limit GET HEAD OPTIONS REPORT PROPFIND>
+        Allow from all
+        Satisfy any
+    </Limit>
+
+    <Limit MKCOL PUT DELETE LOCK UNLOCK COPY MOVE PROPPATCH>
+        Deny from all
+    </Limit>
+</Location>
+
+<Location /icons/>
+    Options None
+</Location>
+
+<Location /error/>
+    Options None
+</Location>
