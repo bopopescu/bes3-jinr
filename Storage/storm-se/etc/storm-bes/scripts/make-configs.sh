@@ -36,11 +36,6 @@ myreplace() {
     cat | sed "s/$a/$b/g"
 }
 
-cond_replace() {
-    if $1; then
-        myreplace $2 $3
-    fi
-}
 
 # Read parameter value from configuration file (main one by default)
 get_config_value() {
