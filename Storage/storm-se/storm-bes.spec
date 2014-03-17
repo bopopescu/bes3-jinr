@@ -29,6 +29,7 @@ Requires:       attr
 Requires:       ntp
 Requires:       java7
 Requires:       httpd
+Requires:       mod_ssl
 
 Conflicts:      emi-storm-gridhttps-mp
 Conflicts:      storm-gridhttps-server
@@ -48,6 +49,8 @@ Tools to configure installation of StoRM specific to BES VO.
 %{__mkdir_p} %{buildroot}/etc/
 %{__cp} -r etc/* -t %{buildroot}/etc/
 
+%{__mkdir_p} %{buildroot}/etc/storm-bes/httpd/conf.d/bes-webdav
+
 %{__mkdir_p} %{buildroot}/usr/
 %{__cp} -r usr/* -t %{buildroot}/usr/
 
@@ -56,13 +59,20 @@ Tools to configure installation of StoRM specific to BES VO.
 %{__rm} -rf %{buildroot}
 
 
+%postun
+#during an upgrade, the value of the argument passed in is 1
+#during an uninstall, the value of the argument passed in is 0
+if [ "$1" = "0" ] ; then
+    %{__rm} -rf /etc/httpd/conf.d/bes-webdav*
+    service httpd condrestart
+fi
+
+
 %files
 %defattr(-,root,root,-)
-/etc/logrotate.d/*
 /etc/cron.d/*
-/etc/httpd/conf.d/*
+/etc/logrotate.d/*
 /etc/security/limits.d/*
-/etc/storm-bes/*
 /usr/sbin/*
 
 %attr(640,root,root) /etc/storm-bes/

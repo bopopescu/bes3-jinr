@@ -2,6 +2,10 @@
 
 BES_STORAGE_AREA=/besfs/bes
 
+BASE_DIR=`dirname $0`/..
+STORM_HTTPD_CONF_DIR="${BASE_DIR}/httpd/conf.d"
+HTTPD_CONF_DIR="/etc/httpd/conf.d"
+
 if [ ! -f /etc/storm-bes/siteinfo/storm.def ]; then
     echo "Main configuration file was not found. Please run 'make-configs.sh' first"
     exit 1
@@ -44,14 +48,15 @@ if [[ ! $httpd_groups =~ "storm" ]]; then
     usermod -a -G storm apache
 fi
 
+echo "Writing httpd configs for WebDAV"
+
+cp -af $STORM_HTTPD_CONF_DIR/* -t $HTTPD_CONF_DIR
 
 echo "Restarting httpd server to enable WebDAV access"
 
 chkconfig httpd on
 service httpd restart
 
-echo
-echo "Alias warnings could be safely ignored."
 echo
 echo "Configuration is done, now you could check the service itself."
 echo

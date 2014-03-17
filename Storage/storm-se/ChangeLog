@@ -21,3 +21,12 @@
 
 * Wed Mar 12 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.2-2
 - WebDAV support switched from storm-gridhttps to httpd + mod_dav
+
+* Sat Mar 15 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.2-3
+- Support for WebDAV + HTTPS with client certificates checking
+- WebDAV port choice in configuration scripts
+
+* Sun Mar 16 2014 Sergey Belov <Sergey.Belov@jinr.ru> 0.1.2-4
+- Default ports for WebDAV changed to 2880
+- SRM port choice in configuration scripts
+

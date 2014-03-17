@@ -1,6 +1,7 @@
-NameVirtualHost *:443
+Listen 2880
+NameVirtualHost *:2880
 
-<VirtualHost *:443>
+<VirtualHost *:2880>
     SSLEngine               on
     SSLCertificateFile      /etc/grid-security/hostcert.pem
     SSLCertificateKeyFile   /etc/grid-security/hostkey.pem
