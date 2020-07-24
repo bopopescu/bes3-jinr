@@ -87,7 +87,7 @@ def getRoleFromGID( groupID ):
     gLogger.error( errStr, "%s %s" % ( groupID, lfc.sstrerror( lfc.cvar.serrno ) ) )
     return S_ERROR()
 
-def addReplica( guid, pfn, se, master ):
+def addReplica( guid, pfn, se, main ):
   fid = lfc.lfc_fileid()
   status = 'U'
   f_type = 'D'
@@ -168,7 +168,7 @@ class LcgFileCatalogClient( FileCatalogueBase ):
 
     if not host:
       # if not provided, take if from CS
-      host = gConfig.getValue( '/Resources/FileCatalogs/LcgFileCatalog/MasterHost', '' )
+      host = gConfig.getValue( '/Resources/FileCatalogs/LcgFileCatalog/MainHost', '' )
     if not host and 'LFC_HOST' in os.environ:
       # if not in CS take from environ
       host = os.environ['LFC_HOST']
@@ -926,16 +926,16 @@ class LcgFileCatalogClient( FileCatalogueBase ):
     for lfn, info in lfns.items():
       pfn = info['PFN']
       se = info['SE']
-      if 'Master' not in info:
-        master = False
+      if 'Main' not in info:
+        main = False
       else:
-        master = info['Master']
+        main = info['Main']
       res = self.__getLFNGuid( lfn )
       if not res['OK']:
         failed[lfn] = res['Message']
       else:
         guid = res['Value']
-        res = addReplica( guid, pfn, se, master )
+        res = addReplica( guid, pfn, se, main )
         if res['OK']:
           successful[lfn] = True
         else:

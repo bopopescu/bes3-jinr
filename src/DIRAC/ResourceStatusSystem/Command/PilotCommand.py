@@ -17,7 +17,7 @@ __RCSID__ = '$Id:  $'
 
 class PilotCommand( Command ):
   '''
-    Pilot "master" Command.    
+    Pilot "main" Command.    
   '''
 
   def __init__( self, args = None, clients = None ):
@@ -70,10 +70,10 @@ class PilotCommand( Command ):
      
     return S_OK( ( element, name ) ) 
   
-  def doNew( self, masterParams = None ):
+  def doNew( self, mainParams = None ):
   
-    if masterParams is not None:
-      element, name = masterParams
+    if mainParams is not None:
+      element, name = mainParams
     else:
       params = self._prepareCommand()
       if not params[ 'OK' ]:
@@ -147,7 +147,7 @@ class PilotCommand( Command ):
       
     return result    
 
-  def doMaster( self ):
+  def doMain( self ):
     
     siteNames = CSHelpers.getSites()
     if not siteNames[ 'OK' ]:

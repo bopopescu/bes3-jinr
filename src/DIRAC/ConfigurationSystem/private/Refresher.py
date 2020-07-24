@@ -90,7 +90,7 @@ class Refresher( threading.Thread ):
   def autoRefreshAndPublish( self, sURL ):
     gLogger.debug( "Setting configuration refresh as automatic" )
     if not gConfigurationData.getAutoPublish():
-      gLogger.debug( "Slave server won't auto publish itself" )
+      gLogger.debug( "Subordinate server won't auto publish itself" )
     if not gConfigurationData.getName():
       import DIRAC
       DIRAC.abort( 10, "Missing configuration name!" )
@@ -110,25 +110,25 @@ class Refresher( threading.Thread ):
 
   def __refreshAndPublish( self ):
     self.__lastUpdateTime = time.time()
-    gLogger.info( "Refreshing from master server" )
+    gLogger.info( "Refreshing from main server" )
     from DIRAC.Core.DISET.RPCClient import RPCClient
-    sMasterServer = gConfigurationData.getMasterServer()
-    if sMasterServer:
-      oClient = RPCClient( sMasterServer, timeout = self.__timeout,
+    sMainServer = gConfigurationData.getMainServer()
+    if sMainServer:
+      oClient = RPCClient( sMainServer, timeout = self.__timeout,
                            useCertificates = gConfigurationData.useServerCertificate(),
                            skipCACheck = gConfigurationData.skipCACheck() )
       dRetVal = _updateFromRemoteLocation( oClient )
       if not dRetVal[ 'OK' ]:
-        gLogger.error( "Can't update from master server", dRetVal[ 'Message' ] )
+        gLogger.error( "Can't update from main server", dRetVal[ 'Message' ] )
         return False
       if gConfigurationData.getAutoPublish():
-        gLogger.info( "Publishing to master server..." )
-        dRetVal = oClient.publishSlaveServer( self.__url )
+        gLogger.info( "Publishing to main server..." )
+        dRetVal = oClient.publishSubordinateServer( self.__url )
         if not dRetVal[ 'OK' ]:
-          gLogger.error( "Can't publish to master server", dRetVal[ 'Message' ] )
+          gLogger.error( "Can't publish to main server", dRetVal[ 'Message' ] )
       return True
     else:
-      gLogger.warn( "No master server is specified in the configuration, trying to get data from other slaves" )
+      gLogger.warn( "No main server is specified in the configuration, trying to get data from other subordinates" )
       return self.__refresh()[ 'OK' ]
 
   def __refresh( self ):

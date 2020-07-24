@@ -211,7 +211,7 @@ class FilesCase(LFCClientTestCase):
 
     ######################################################
     #
-    #  Test obtaining the replica status for the master replica
+    #  Test obtaining the replica status for the main replica
     #
 
     replicaTuple = (lfn,pfn,se)
@@ -224,7 +224,7 @@ class FilesCase(LFCClientTestCase):
 
     ######################################################
     #
-    #  Test setting the replica status for the master replica
+    #  Test setting the replica status for the main replica
     #
 
     replicaTuple = (lfn,pfn,se,'C')

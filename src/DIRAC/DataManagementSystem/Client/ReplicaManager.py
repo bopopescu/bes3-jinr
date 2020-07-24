@@ -1988,7 +1988,7 @@ class ReplicaManager( CatalogToStorage ):
     self.log.verbose( "__registerReplica: Successfully resolved %s replicas for registration." % len( replicaTuples ) )
     # HACK!
     replicaDict = {}
-    for lfn, pfn, se, master in replicaTuples:
+    for lfn, pfn, se, main in replicaTuples:
       replicaDict[lfn] = {'SE':se, 'PFN':pfn}
 
     if catalog:

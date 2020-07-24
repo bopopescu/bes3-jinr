@@ -101,8 +101,8 @@ class CacheFeederAgent( AgentModule ):
       return commandObject
     commandObject = commandObject[ 'Value' ]
     
-    # Set master mode
-    commandObject.masterMode = True
+    # Set main mode
+    commandObject.mainMode = True
         
     self.log.info( '%s/%s' % ( commandModule, commandName ) )
 

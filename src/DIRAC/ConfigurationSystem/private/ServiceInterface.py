@@ -22,21 +22,21 @@ class ServiceInterface( threading.Thread ):
     gLogger.info( "Initializing Configuration Service", "URL is %s" % sURL )
     self.__modificationsIgnoreMask = [ '/DIRAC/Configuration/Servers', '/DIRAC/Configuration/Version' ]
     gConfigurationData.setAsService()
-    if not gConfigurationData.isMaster():
-      gLogger.info( "Starting configuration service as slave" )
+    if not gConfigurationData.isMain():
+      gLogger.info( "Starting configuration service as subordinate" )
       gRefresher.autoRefreshAndPublish( self.sURL )
     else:
-      gLogger.info( "Starting configuration service as master" )
+      gLogger.info( "Starting configuration service as main" )
       gRefresher.disable()
       self.__loadConfigurationData()
-      self.dAliveSlaveServers = {}
-      self.__launchCheckSlaves()
+      self.dAliveSubordinateServers = {}
+      self.__launchCheckSubordinates()
 
-  def isMaster( self ):
-    return gConfigurationData.isMaster()
+  def isMain( self ):
+    return gConfigurationData.isMain()
 
-  def __launchCheckSlaves( self ):
-    gLogger.info( "Starting purge slaves thread" )
+  def __launchCheckSubordinates( self ):
+    gLogger.info( "Starting purge subordinates thread" )
     self.setDaemon( 1 )
     self.start()
 
@@ -46,7 +46,7 @@ class ServiceInterface( threading.Thread ):
     except:
       pass
     gConfigurationData.loadConfigurationData()
-    if gConfigurationData.isMaster():
+    if gConfigurationData.isMain():
       bBuiltNewConfiguration = False
       if not gConfigurationData.getName():
         DIRAC.abort( 10, "Missing name for the configuration to be exported!" )
@@ -61,58 +61,58 @@ class ServiceInterface( threading.Thread ):
         gConfigurationData.setServers( self.sURL )
         bBuiltNewConfiguration = True
 
-      gConfigurationData.setMasterServer( self.sURL )
+      gConfigurationData.setMainServer( self.sURL )
 
       if bBuiltNewConfiguration:
         gConfigurationData.writeRemoteConfigurationToDisk()
 
   def __generateNewVersion( self ):
-    if gConfigurationData.isMaster():
+    if gConfigurationData.isMain():
       gConfigurationData.generateNewVersion()
       gConfigurationData.writeRemoteConfigurationToDisk()
 
-  def publishSlaveServer( self, sSlaveURL ):
-    if not gConfigurationData.isMaster():
+  def publishSubordinateServer( self, sSubordinateURL ):
+    if not gConfigurationData.isMain():
       return S_ERROR( "Configuration modification is not allowed in this server" )
-    gLogger.info( "Pinging slave %s" % sSlaveURL )
-    rpcClient = RPCClient( sSlaveURL, timeout = 10, useCertificates = True )
+    gLogger.info( "Pinging subordinate %s" % sSubordinateURL )
+    rpcClient = RPCClient( sSubordinateURL, timeout = 10, useCertificates = True )
     retVal = rpcClient.ping()
     if not retVal[ 'OK' ]:
-      gLogger.info( "Slave %s didn't reply" % sSlaveURL )
+      gLogger.info( "Subordinate %s didn't reply" % sSubordinateURL )
       return
     if retVal[ 'Value' ][ 'name' ] != 'Configuration/Server':
-      gLogger.info( "Slave %s is not a CS serveR" % sSlaveURL )
+      gLogger.info( "Subordinate %s is not a CS serveR" % sSubordinateURL )
       return
-    bNewSlave = False
-    if not sSlaveURL in self.dAliveSlaveServers.keys():
-      bNewSlave = True
-      gLogger.info( "New slave registered", sSlaveURL )
-    self.dAliveSlaveServers[ sSlaveURL ] = time.time()
-    if bNewSlave:
+    bNewSubordinate = False
+    if not sSubordinateURL in self.dAliveSubordinateServers.keys():
+      bNewSubordinate = True
+      gLogger.info( "New subordinate registered", sSubordinateURL )
+    self.dAliveSubordinateServers[ sSubordinateURL ] = time.time()
+    if bNewSubordinate:
       gConfigurationData.setServers( "%s, %s" % ( self.sURL,
-                                                    ", ".join( self.dAliveSlaveServers.keys() ) ) )
+                                                    ", ".join( self.dAliveSubordinateServers.keys() ) ) )
       self.__generateNewVersion()
 
-  def __checkSlavesStatus( self, forceWriteConfiguration = False ):
-    gLogger.info( "Checking status of slave servers" )
-    iGraceTime = gConfigurationData.getSlavesGraceTime()
-    lSlaveURLs = self.dAliveSlaveServers.keys()
-    bModifiedSlaveServers = False
-    for sSlaveURL in lSlaveURLs:
-      if time.time() - self.dAliveSlaveServers[ sSlaveURL ] > iGraceTime:
-        gLogger.info( "Found dead slave", sSlaveURL )
-        del( self.dAliveSlaveServers[ sSlaveURL ] )
-        bModifiedSlaveServers = True
-    if bModifiedSlaveServers or forceWriteConfiguration:
+  def __checkSubordinatesStatus( self, forceWriteConfiguration = False ):
+    gLogger.info( "Checking status of subordinate servers" )
+    iGraceTime = gConfigurationData.getSubordinatesGraceTime()
+    lSubordinateURLs = self.dAliveSubordinateServers.keys()
+    bModifiedSubordinateServers = False
+    for sSubordinateURL in lSubordinateURLs:
+      if time.time() - self.dAliveSubordinateServers[ sSubordinateURL ] > iGraceTime:
+        gLogger.info( "Found dead subordinate", sSubordinateURL )
+        del( self.dAliveSubordinateServers[ sSubordinateURL ] )
+        bModifiedSubordinateServers = True
+    if bModifiedSubordinateServers or forceWriteConfiguration:
       gConfigurationData.setServers( "%s, %s" % ( self.sURL,
-                                                    ", ".join( self.dAliveSlaveServers.keys() ) ) )
+                                                    ", ".join( self.dAliveSubordinateServers.keys() ) ) )
       self.__generateNewVersion()
 
   def getCompressedConfiguration( self ):
     sData = gConfigurationData.getCompressedData()
 
   def updateConfiguration( self, sBuffer, commiter = "", updateVersionOption = False ):
-    if not gConfigurationData.isMaster():
+    if not gConfigurationData.isMain():
       return S_ERROR( "Configuration modification is not allowed in this server" )
     #Load the data in a ConfigurationData object
     oRemoteConfData = ConfigurationData( False )
@@ -150,7 +150,7 @@ class ServiceInterface( threading.Thread ):
     gConfigurationData.unlock()
     gLogger.info( "Generating new version" )
     gConfigurationData.generateNewVersion()
-    #self.__checkSlavesStatus( forceWriteConfiguration = True )
+    #self.__checkSubordinatesStatus( forceWriteConfiguration = True )
     gLogger.info( "Writing new version to disk!" )
     retVal = gConfigurationData.writeRemoteConfigurationToDisk( "%s@%s" % ( commiter, gConfigurationData.getVersion() ) )
     gLogger.info( "New version it is!" )
@@ -169,9 +169,9 @@ class ServiceInterface( threading.Thread ):
 
   def run( self ):
     while True:
-      iWaitTime = gConfigurationData.getSlavesGraceTime()
+      iWaitTime = gConfigurationData.getSubordinatesGraceTime()
       time.sleep( iWaitTime )
-      self.__checkSlavesStatus()
+      self.__checkSubordinatesStatus()
 
   def getVersionContents( self, date ):
     backupDir = gConfigurationData.getBackupDir()

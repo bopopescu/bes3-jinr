@@ -500,7 +500,7 @@ class ProcessPool( object ):
   Pool depth
   ----------
 
-  The :ProcessPool: is keeping required number of active workers all the time: slave workers are only created 
+  The :ProcessPool: is keeping required number of active workers all the time: subordinate workers are only created 
   when pendingQueue is being filled with tasks, not exceeding defined min and max limits. When pendingQueue is 
   empty, active workers will be cleaned up by themselves, as each worker has got built in 
   self-destroy mechnism after 10 idle loops. 
@@ -508,7 +508,7 @@ class ProcessPool( object ):
   Processing and communication
   ----------------------------
 
-  The communication between :ProcessPool: instace and slaves is performed using two :multiprocessing.Queues: 
+  The communication between :ProcessPool: instace and subordinates is performed using two :multiprocessing.Queues: 
   * pendingQueue, used to push tasks to the workers,
   * resultsQueue for revert direction;
   and one :multiprocessing.Event: instance (stopEvent), which is working as a fuse to destroy idle workers 

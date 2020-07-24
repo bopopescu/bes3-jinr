@@ -70,7 +70,7 @@ class LcgFileCatalogCombinedClient:
                    'removeFile', 'setReplicaStatus', 'setReplicaHost', 'createDirectory',
                    'removeDirectory', 'removeDataset', 'removeFileFromDataset', 'createDataset']
 
-  def __init__( self, infosys = None, master_host = None, mirrors = [] ):
+  def __init__( self, infosys = None, main_host = None, mirrors = [] ):
     """ Default constructor
     """
     if not infosys:
@@ -78,12 +78,12 @@ class LcgFileCatalogCombinedClient:
       infosys = gConfig.getValue( configPath )
 
     self.valid = False
-    if not master_host:
-      configPath = '/Resources/FileCatalogs/LcgFileCatalogCombined/MasterHost'
-      master_host = gConfig.getValue( configPath )
-    if master_host:
-      # Create the master LFC client first
-      self.lfc = LcgFileCatalogClient( infosys, master_host )
+    if not main_host:
+      configPath = '/Resources/FileCatalogs/LcgFileCatalogCombined/MainHost'
+      main_host = gConfig.getValue( configPath )
+    if main_host:
+      # Create the main LFC client first
+      self.lfc = LcgFileCatalogClient( infosys, main_host )
       if self.lfc.isOK():
         self.valid = True
 
@@ -101,9 +101,9 @@ class LcgFileCatalogCombinedClient:
         self.mirrors.append( lfc )
       self.nmirrors = len( self.mirrors )
 
-      # Keep the environment for the master instance
-      self.master_host = self.lfc.host
-      os.environ['LFC_HOST'] = self.master_host
+      # Keep the environment for the main instance
+      self.main_host = self.lfc.host
+      os.environ['LFC_HOST'] = self.main_host
       os.environ['LCG_GFAL_INFOSYS'] = infosys
       self.name = 'LFC'
       self.timeout = 3000
@@ -128,7 +128,7 @@ class LcgFileCatalogCombinedClient:
   def w_execute( self, *parms, **kws ):
     """ Write method executor.
         Dispatches execution of the methods which need Read/Write
-        access to the master LFC instance
+        access to the main LFC instance
     """
 
     # If the DN argument is given, this is an operation on behalf
@@ -161,8 +161,8 @@ class LcgFileCatalogCombinedClient:
           else:
             result = resMeth
       except Exception, x:
-        gLogger.exception( 'Exception while calling LFC Master service', '', x )
-        result = S_ERROR( 'Exception while calling LFC Master service ' + str( x ) )
+        gLogger.exception( 'Exception while calling LFC Main service', '', x )
+        result = S_ERROR( 'Exception while calling LFC Main service ' + str( x ) )
       count += 1
     return result
 
@@ -215,10 +215,10 @@ class LcgFileCatalogCombinedClient:
         i += 1
       count += 1
 
-    # Return environment to the master LFC instance
-    os.environ['LFC_HOST'] = self.master_host
+    # Return environment to the main LFC instance
+    os.environ['LFC_HOST'] = self.main_host
 
-    # Call the master LFC if all the mirrors failed
+    # Call the main LFC if all the mirrors failed
     if not result['OK']:
       try:
         result = S_OK()
@@ -234,7 +234,7 @@ class LcgFileCatalogCombinedClient:
           else:
             result = resMeth
       except Exception, x:
-        gLogger.exception( 'Exception while calling LFC Master service' )
-        result = S_ERROR( 'Exception while calling LFC Master service ' + str( x ) )
+        gLogger.exception( 'Exception while calling LFC Main service' )
+        result = S_ERROR( 'Exception while calling LFC Main service ' + str( x ) )
 
     return result

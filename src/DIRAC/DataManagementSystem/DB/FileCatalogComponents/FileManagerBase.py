@@ -95,7 +95,7 @@ class FileManagerBase:
     """
     return S_ERROR( "To be implemented on derived class" )
 
-  def _insertReplicas( self, lfns, master = False, connection = False ):
+  def _insertReplicas( self, lfns, main = False, connection = False ):
     """To be implemented on derived class
     """
     return S_ERROR( "To be implemented on derived class" )
@@ -278,7 +278,7 @@ class FileManagerBase:
     # Register the replicas
     newlyRegistered = {}
     if lfns:
-      res = self._insertReplicas( lfns, master = True, connection = connection )
+      res = self._insertReplicas( lfns, main = True, connection = connection )
       toPurge = []
       if not res['OK']:
         for lfn in lfns.keys():

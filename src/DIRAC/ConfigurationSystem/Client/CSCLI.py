@@ -40,7 +40,7 @@ class CSCLI( cmd.Cmd ):
   def __init__( self ):
     cmd.Cmd.__init__( self )
     self.connected = False
-    self.masterURL = "unset"
+    self.mainURL = "unset"
     self.writeEnabled = False
     self.modifiedData = False
     self.rpcClient = None
@@ -85,11 +85,11 @@ class CSCLI( cmd.Cmd ):
     self.writeEnabled = writeEnabled
     if connected:
       if writeEnabled:
-        self.prompt = "(%s)-%s> " % ( self.masterURL, colorize( "Connected", "green" ) )
+        self.prompt = "(%s)-%s> " % ( self.mainURL, colorize( "Connected", "green" ) )
       else:
-        self.prompt = "(%s)-%s> " % ( self.masterURL, colorize( "Connected (RO)", "yellow" ) )
+        self.prompt = "(%s)-%s> " % ( self.mainURL, colorize( "Connected (RO)", "yellow" ) )
     else:
-      self.prompt = "(%s)-%s> " % ( self.masterURL, colorize( "Disconnected", "red" ) )
+      self.prompt = "(%s)-%s> " % ( self.mainURL, colorize( "Disconnected", "red" ) )
 
 
   def _printPair( self, key, value, separator = ":" ):
@@ -150,7 +150,7 @@ class CSCLI( cmd.Cmd ):
 
   def _setStatus( self, connected = True ):
     if not connected:
-      self.masterURL = "unset"
+      self.mainURL = "unset"
       self._setConnected( False, False )
     else:
       retVal = self.rpcClient.writeEnabled()
@@ -164,23 +164,23 @@ class CSCLI( cmd.Cmd ):
         self._setConnected( True, False )
 
   def _tryConnection( self ):
-    print "Trying connection to %s" % self.masterURL
+    print "Trying connection to %s" % self.mainURL
     try:
-      self.rpcClient = RPCClient( self.masterURL )
+      self.rpcClient = RPCClient( self.mainURL )
       self._setStatus()
     except Exception, x:
-      gLogger.error( "Couldn't connect to %s (%s)" % ( self.masterURL, str( x ) ) )
+      gLogger.error( "Couldn't connect to %s (%s)" % ( self.mainURL, str( x ) ) )
       self._setStatus( False )
 
   def do_connect( self, args = '' ):
     """
-    Connects to configuration master server (in specified url if provided).
+    Connects to configuration main server (in specified url if provided).
     
     Usage: connect <url>
     """
     if not args or type( args ) not in types.StringTypes:
-      self.masterURL = gConfigurationData.getMasterServer()
-      if self.masterURL != "unknown" and self.masterURL:
+      self.mainURL = gConfigurationData.getMainServer()
+      if self.mainURL != "unknown" and self.mainURL:
         self._tryConnection()
       else:
         self._setStatus( False )
@@ -190,7 +190,7 @@ class CSCLI( cmd.Cmd ):
         print "Must specify witch url to connect"
         self._setStatus( False )
       else:
-        self.masterURL = splitted[0].strip()
+        self.mainURL = splitted[0].strip()
         self._tryConnection()
 
   def do_sections( self, args ):
@@ -293,7 +293,7 @@ class CSCLI( cmd.Cmd ):
       choice = raw_input( "Do you really want to send changes to server? yes/no [no]: " )
       choice = choice.lower()
       if choice in ( "yes", "y" ):
-        print "Uploading changes to %s (It may take some seconds)..." % self.masterURL
+        print "Uploading changes to %s (It may take some seconds)..." % self.mainURL
         response = self.modificator.commit()
         if response[ 'OK' ]:
           self.modifiedData = False

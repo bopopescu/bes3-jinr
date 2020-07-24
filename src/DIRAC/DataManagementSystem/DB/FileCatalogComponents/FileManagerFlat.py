@@ -163,15 +163,15 @@ class FileManagerFlat(FileManagerBase):
   # _addReplicas related methods
   #
   
-  def _insertReplicas(self,lfns,master=False,connection=False): 
+  def _insertReplicas(self,lfns,main=False,connection=False): 
     connection = self._getConnection(connection)
     res = self._getStatusInt('AprioriGood',connection=connection)
     statusID = 0
     if res['OK']:
       statusID = res['Value']
     replicaType = 'Replica'
-    if master:
-      replicaType = 'Master'
+    if main:
+      replicaType = 'Main'
     insertTuples = {}
     deleteTuples = []
     successful = {}
@@ -186,7 +186,7 @@ class FileManagerFlat(FileManagerBase):
         failed[lfn] = res['Message']
         continue
       seID = res['Value']
-      if not master:
+      if not main:
         res = self.__existsReplica(fileID,seID,connection=connection)
         if not res['OK']:
           failed[lfn] = res['Message']

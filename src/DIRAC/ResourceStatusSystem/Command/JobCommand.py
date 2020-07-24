@@ -16,7 +16,7 @@ __RCSID__ = '$Id:  $'
 
 class JobCommand( Command ):
   '''
-    Job "master" Command.    
+    Job "main" Command.    
   '''
 
   def __init__( self, args = None, clients = None ):
@@ -60,9 +60,9 @@ class JobCommand( Command ):
      
     return S_OK( name )
   
-  def doNew( self, masterParams = None ):
+  def doNew( self, mainParams = None ):
     '''
-      Gets the parameters to run, either from the master method or from its
+      Gets the parameters to run, either from the main method or from its
       own arguments.
       
       It contacts the WMSAdministrator with a list of site names, or a single 
@@ -71,8 +71,8 @@ class JobCommand( Command ):
       If there are jobs, are recorded and then returned.    
     '''
     
-    if masterParams is not None:
-      name = masterParams
+    if mainParams is not None:
+      name = mainParams
     else:
       params = self._prepareCommand()
       if not params[ 'OK' ]:
@@ -132,9 +132,9 @@ class JobCommand( Command ):
       
     return result
              
-  def doMaster( self ):
+  def doMain( self ):
     '''
-      Master method.
+      Main method.
       
       Gets all sites and calls doNew method.
     '''

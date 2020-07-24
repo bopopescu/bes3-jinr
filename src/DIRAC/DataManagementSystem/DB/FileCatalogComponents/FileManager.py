@@ -298,7 +298,7 @@ class FileManager(FileManagerBase):
   # _addReplicas related methods
   #
   
-  def _insertReplicas(self,lfns,master=False,connection=False): 
+  def _insertReplicas(self,lfns,main=False,connection=False): 
     connection = self._getConnection(connection)
     # Add the files
     failed = {}
@@ -326,7 +326,7 @@ class FileManager(FileManagerBase):
           continue
         seID = res['Value']
         insertTuples.append((fileID,seID))
-    if not master:
+    if not main:
       res = self._getRepIDsForReplica(insertTuples, connection=connection)
       if not res['OK']:
         return res
@@ -353,8 +353,8 @@ class FileManager(FileManagerBase):
         directorySESizeDict[dirID][seID]['Files'] += 1
 
     replicaType = 'Replica'
-    if master:
-      replicaType = 'Master'
+    if main:
+      replicaType = 'Main'
     insertReplicas = []
     toDelete = []
     for lfn in lfns.keys():

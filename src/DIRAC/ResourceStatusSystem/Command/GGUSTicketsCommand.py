@@ -19,7 +19,7 @@ __RCSID__ = '$Id:  $'
 
 class GGUSTicketsCommand( Command ):
   '''
-    GGUSTickets "master" Command
+    GGUSTickets "main" Command
   '''
   
   def __init__( self, args = None, clients = None ):
@@ -65,9 +65,9 @@ class GGUSTicketsCommand( Command ):
      
     return getGOCSiteName( name )
 
-  def doNew( self, masterParams = None ):
+  def doNew( self, mainParams = None ):
     '''
-      Gets the parameters to run, either from the master method or from its
+      Gets the parameters to run, either from the main method or from its
       own arguments.
       
       For every elementName ( cannot process bulk queries.. ) contacts the 
@@ -76,8 +76,8 @@ class GGUSTicketsCommand( Command ):
       If there are ggus tickets, are recorded and then returned.    
     '''
     
-    if masterParams is not None:
-      gocName  = masterParams
+    if mainParams is not None:
+      gocName  = mainParams
       gocNames = [ gocName ]
       
     else:
@@ -141,9 +141,9 @@ class GGUSTicketsCommand( Command ):
                  
     return result  
 
-  def doMaster( self ):
+  def doMain( self ):
     '''
-      Master method, which looks little bit spaguetti code, sorry !
+      Main method, which looks little bit spaguetti code, sorry !
       - It gets all gocSites.
       
       As there is no bulk query, it compares with what we have on the database.

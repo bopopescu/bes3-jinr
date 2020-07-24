@@ -13,7 +13,7 @@ from DIRAC.Core.Utilities import Time
 import DIRAC
 
 def getServiceOption( serviceInfo, optionName, defaultValue ):
-  """ Get service option resolving default values from the master service
+  """ Get service option resolving default values from the main service
   """
   if optionName[0] == "/":
     return gConfig.getValue( optionName, defaultValue )

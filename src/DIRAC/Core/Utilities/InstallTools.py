@@ -38,10 +38,10 @@ The setupSite method (used by the dirac-setup-site command) will use the followi
 /LocalInstallation/Services:      List of System/ServiceName to be setup
 /LocalInstallation/Agents:        List of System/AgentName to be setup
 /LocalInstallation/WebPortal:     Boolean to setup the Web Portal (default no)
-/LocalInstallation/ConfigurationMaster: Boolean, requires Configuration/Server to be given in the list of Services (default: no)
+/LocalInstallation/ConfigurationMain: Boolean, requires Configuration/Server to be given in the list of Services (default: no)
 /LocalInstallation/PrivateConfiguration: Boolean, requires Configuration/Server to be given in the list of Services (default: no)
 
-If a Master Configuration Server is being installed the following Options can be used:
+If a Main Configuration Server is being installed the following Options can be used:
 
 /LocalInstallation/ConfigurationName: Name of the Configuration (default: Setup )
 
@@ -312,7 +312,7 @@ def _addCfgToLocalCS( cfg ):
 
 def _getCentralCfg( installCfg ):
   """
-  Create the esqueleton of central Cfg for an initial Master CS
+  Create the esqueleton of central Cfg for an initial Main CS
   """
   # First copy over from installation cfg
   centralCfg = CFG()
@@ -403,7 +403,7 @@ def _getCentralCfg( installCfg ):
           properties.append( prop )
           centralCfg['Registry']['Groups'][defaultGroupName].appendToOption( 'Properties', ', %s' % prop )
 
-  # Add the master Host description
+  # Add the main Host description
   if hostDN:
     hostSection = cfgPath( 'Registry', 'Hosts', host )
     if not centralCfg.isSection( hostSection ):
@@ -1205,7 +1205,7 @@ def setupSite( scriptCfg, cfg = None ):
   setupAgents = [ k.split( '/' ) for k in localCfg.getOption( cfgInstallPath( 'Agents' ), [] ) ]
   setupExecutors = [ k.split( '/' ) for k in localCfg.getOption( cfgInstallPath( 'Executors' ), [] ) ]
   setupWeb = localCfg.getOption( cfgInstallPath( 'WebPortal' ), False )
-  setupConfigurationMaster = localCfg.getOption( cfgInstallPath( 'ConfigurationMaster' ), False )
+  setupConfigurationMain = localCfg.getOption( cfgInstallPath( 'ConfigurationMain' ), False )
   setupPrivateConfiguration = localCfg.getOption( cfgInstallPath( 'PrivateConfiguration' ), False )
   setupConfigurationName = localCfg.getOption( cfgInstallPath( 'ConfigurationName' ), setup )
   setupAddConfiguration = localCfg.getOption( cfgInstallPath( 'AddConfiguration' ), True )
@@ -1324,13 +1324,13 @@ def setupSite( scriptCfg, cfg = None ):
       gLogger.notice( 'Starting runsvdir ...' )
       os.system( "runsvdir %s 'log:  DIRAC runsv' &" % startDir )
 
-  if ['Configuration', 'Server'] in setupServices and setupConfigurationMaster:
-    # This server hosts the Master of the CS
+  if ['Configuration', 'Server'] in setupServices and setupConfigurationMain:
+    # This server hosts the Main of the CS
     from DIRAC.ConfigurationSystem.Client.ConfigurationData import gConfigurationData
-    gLogger.notice( 'Installing Master Configuration Server' )
+    gLogger.notice( 'Installing Main Configuration Server' )
     cfg = __getCfg( cfgPath( 'DIRAC', 'Setups', setup ), 'Configuration', instance )
     _addCfgToDiracCfg( cfg )
-    cfg = __getCfg( cfgPath( 'DIRAC', 'Configuration' ), 'Master' , 'yes' )
+    cfg = __getCfg( cfgPath( 'DIRAC', 'Configuration' ), 'Main' , 'yes' )
     cfg.setOption( cfgPath( 'DIRAC', 'Configuration', 'Name' ) , setupConfigurationName )
 
     serversCfgPath = cfgPath( 'DIRAC', 'Configuration', 'Servers' )
@@ -1383,16 +1383,16 @@ def setupSite( scriptCfg, cfg = None ):
       DIRAC.exit( -1 )
     return S_ERROR( error )
 
-  # We need to make sure components are connecting to the Master CS, that is the only one being update
+  # We need to make sure components are connecting to the Main CS, that is the only one being update
   from DIRAC import gConfig
   localServers = localCfg.getOption( cfgPath( 'DIRAC', 'Configuration', 'Servers' ) )
-  masterServer = gConfig.getValue( cfgPath( 'DIRAC', 'Configuration', 'MasterServer' ), '' )
+  mainServer = gConfig.getValue( cfgPath( 'DIRAC', 'Configuration', 'MainServer' ), '' )
   initialCfg = __getCfg( cfgPath( 'DIRAC', 'Configuration' ), 'Servers' , localServers )
-  masterCfg = __getCfg( cfgPath( 'DIRAC', 'Configuration' ), 'Servers' , masterServer )
-  _addCfgToDiracCfg( masterCfg )
+  mainCfg = __getCfg( cfgPath( 'DIRAC', 'Configuration' ), 'Servers' , mainServer )
+  _addCfgToDiracCfg( mainCfg )
 
   # 1.- Setup the instances in the CS
-  # If the Configuration Server used is not the Master, it can take some time for this
+  # If the Configuration Server used is not the Main, it can take some time for this
   # info to be propagated, this may cause the later setup to fail
   if setupAddConfiguration:
     gLogger.notice( 'Registering System instances' )
@@ -1464,7 +1464,7 @@ def setupSite( scriptCfg, cfg = None ):
   if setupWeb:
     setupPortal()
 
-  if localServers != masterServer:
+  if localServers != mainServer:
     _addCfgToDiracCfg( initialCfg )
     for system, service in  setupServices:
       runsvctrlComponent( system, service, 't' )
@@ -1867,8 +1867,8 @@ def installMySQL():
   """
   Attempt an installation of MySQL
   mode:
-    Master
-    Slave
+    Main
+    Subordinate
     None
   """
   fixMySQLScripts()
@@ -1877,7 +1877,7 @@ def installMySQL():
     gLogger.notice( 'MySQL already installed' )
     return S_OK()
 
-  if mysqlMode.lower() not in [ '', 'master', 'slave' ]:
+  if mysqlMode.lower() not in [ '', 'main', 'subordinate' ]:
     error = 'Unknown MySQL server Mode'
     if exitOnError:
       gLogger.fatal( error, mysqlMode )
@@ -1914,24 +1914,24 @@ def installMySQL():
         line = ''
       elif line.find( 'innodb_data_file_path' ) == 0:
         line = line.replace( '2000M', '200M' )
-      elif line.find( 'server-id' ) == 0 and mysqlMode.lower() == 'master':
-        # MySQL Configuration for Master Server
+      elif line.find( 'server-id' ) == 0 and mysqlMode.lower() == 'main':
+        # MySQL Configuration for Main Server
         line = '\n'.join( ['server-id = 1',
-                           '# DIRAC Master-Server',
+                           '# DIRAC Main-Server',
                            'sync-binlog = 1',
                            'replicate-ignore-table = mysql.MonitorData',
                            '# replicate-ignore-db=db_name',
                            'log-bin = mysql-bin',
-                           'log-slave-updates', '' ] )
-      elif line.find( 'server-id' ) == 0 and mysqlMode.lower() == 'slave':
-        # MySQL Configuration for Slave Server
+                           'log-subordinate-updates', '' ] )
+      elif line.find( 'server-id' ) == 0 and mysqlMode.lower() == 'subordinate':
+        # MySQL Configuration for Subordinate Server
         line = '\n'.join( ['server-id = %s' % int( time.time() ),
-                           '# DIRAC Slave-Server',
+                           '# DIRAC Subordinate-Server',
                            'sync-binlog = 1',
                            'replicate-ignore-table = mysql.MonitorData',
                            '# replicate-ignore-db=db_name',
                            'log-bin = mysql-bin',
-                           'log-slave-updates', '' ] )
+                           'log-subordinate-updates', '' ] )
       elif line.find( '/opt/dirac/mysql' ) > -1:
         line = line.replace( '/opt/dirac/mysql', mysqlDir )
 

@@ -15,7 +15,7 @@ __RCSID__ = '$Id:  $'
 
 class TransferCommand( Command ):
   '''
-    Transfer "master" Command
+    Transfer "main" Command
   '''
   
   def __init__( self, args = None, clients = None ):
@@ -90,9 +90,9 @@ class TransferCommand( Command ):
 
     return S_OK( ( hours, name, direction, metric ) )
   
-  def doNew( self, masterParams = None ):
+  def doNew( self, mainParams = None ):
     '''
-      Gets the parameters to run, either from the master method or from its
+      Gets the parameters to run, either from the main method or from its
       own arguments.
       
       For every elementName ( cannot process bulk queries.. ) contacts the 
@@ -101,8 +101,8 @@ class TransferCommand( Command ):
       If there are ggus tickets, are recorded and then returned.        
     '''
     
-    if masterParams is not None:
-      hours, name, direction, metric = masterParams
+    if mainParams is not None:
+      hours, name, direction, metric = mainParams
       
     else:
       params = self._prepareCommand()
@@ -201,9 +201,9 @@ class TransferCommand( Command ):
            
     return S_OK( { 'Mean' : value, 'Name' : name } )  
 
-  def doMaster( self ):
+  def doMain( self ):
     '''
-      Master method, which looks little bit spaguetti code, sorry !
+      Main method, which looks little bit spaguetti code, sorry !
       - It gets all Sites.
       - It gets all StorageElements
       

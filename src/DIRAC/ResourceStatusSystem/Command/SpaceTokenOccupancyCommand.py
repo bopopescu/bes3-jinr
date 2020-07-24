@@ -71,9 +71,9 @@ class SpaceTokenOccupancyCommand( Command ):
   
     return S_OK( ( endpoint, spaceToken ) )
 
-  def doNew( self, masterParams = None ):
+  def doNew( self, mainParams = None ):
     '''
-      Gets the parameters to run, either from the master method or from its
+      Gets the parameters to run, either from the main method or from its
       own arguments.
       
       It queries the srm interface, and hopefully it will not crash. Out of the
@@ -82,8 +82,8 @@ class SpaceTokenOccupancyCommand( Command ):
       Then, they are recorded and returned.
     '''   
      
-    if masterParams is not None:
-      spaceTokenEndpoint, spaceToken = masterParams
+    if mainParams is not None:
+      spaceTokenEndpoint, spaceToken = mainParams
     else:
       params = self._prepareCommand()
       if not params[ 'OK' ]:
@@ -133,9 +133,9 @@ class SpaceTokenOccupancyCommand( Command ):
            
     return result    
 
-  def doMaster( self ):
+  def doMain( self ):
     '''
-      Master method. Gets all endpoints from the storage elements and all 
+      Main method. Gets all endpoints from the storage elements and all 
       the spaceTokens. Could have taken from Shares/Disk as well. 
       It queries for all their possible combinations, unless there are records
       in the database for those combinations, which then are not queried. 

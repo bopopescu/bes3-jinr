@@ -79,7 +79,7 @@ class MonitoringCatalog:
     """
     self.__connect()
     try:
-      sqlQuery = "SELECT name FROM sqlite_master WHERE type='table';"
+      sqlQuery = "SELECT name FROM sqlite_main WHERE type='table';"
       c = self.__dbExecute( sqlQuery )
       tablesList = c.fetchall()
       if len( tablesList ) < 2:

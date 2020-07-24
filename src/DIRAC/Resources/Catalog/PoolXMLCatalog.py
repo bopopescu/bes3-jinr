@@ -360,8 +360,8 @@ class PoolXMLCatalog:
   def addReplica( self, replicaTuple ):
     """ This adds a replica to the catalogue
         The tuple to be supplied is of the following form:
-          (lfn,pfn,se,master)
-        where master = True or False
+          (lfn,pfn,se,main)
+        where main = True or False
     """
     if type( replicaTuple ) == types.TupleType:
       replicas = [replicaTuple]
@@ -372,7 +372,7 @@ class PoolXMLCatalog:
 
     failed = {}
     successful = {}
-    for lfn, pfn, se, _master in replicas:
+    for lfn, pfn, se, _main in replicas:
       guid = self.getGuidByLfn( lfn )
       if guid:
         self.files[guid].addPfn( pfn, None, se )

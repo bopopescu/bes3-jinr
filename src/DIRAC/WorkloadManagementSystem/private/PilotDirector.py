@@ -330,10 +330,10 @@ class PilotDirector:
     # CS Servers
     csServers = gConfig.getServersList()
     if len( csServers ) > 3:
-      # Remove the master
-      master = gConfigurationData.getMasterServer()
-      if master in csServers:
-        csServers.remove( master )
+      # Remove the main
+      main = gConfigurationData.getMainServer()
+      if main in csServers:
+        csServers.remove( main )
     pilotOptions.append( '-C %s' % ",".join( csServers ) )
     # DIRAC Extensions to be used in pilots
     # ubeda: I'm not entirely sure if we can use here the same opsHelper as in line

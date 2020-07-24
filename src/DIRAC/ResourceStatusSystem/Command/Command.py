@@ -18,7 +18,7 @@ class Command( object ):
   def __init__( self, args = None, clients = None ):
           
     self.apis       = ( 1 and clients ) or {}
-    self.masterMode = False
+    self.mainMode = False
     self.onlyCache  = False
     self.metrics    = { 'failed' : [] }
     
@@ -26,17 +26,17 @@ class Command( object ):
     _args           = ( 1 and args ) or {}
     self.args.update( _args )
 
-  def doNew( self, masterParams = None ):
+  def doNew( self, mainParams = None ):
     ''' To be extended by real commands
     '''   
-    return S_OK( ( self.args, masterParams ) )
+    return S_OK( ( self.args, mainParams ) )
   
   def doCache( self ):
     ''' To be extended by real commands
     '''
     return S_OK( self.args )
 
-  def doMaster( self ):
+  def doMain( self ):
     ''' To be extended by real commands
     '''
     return S_OK( self.metrics )   
@@ -45,9 +45,9 @@ class Command( object ):
     ''' To be extended by real commands
     '''
     
-    if self.masterMode:
-      gLogger.verbose( 'doMaster')
-      return self.returnSObj( self.doMaster() )
+    if self.mainMode:
+      gLogger.verbose( 'doMain')
+      return self.returnSObj( self.doMain() )
     
     gLogger.verbose( 'doCache' )      
     result = self.doCache()

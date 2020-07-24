@@ -18,7 +18,7 @@ __RCSID__ = '$Id:  $'
 
 class DowntimeCommand( Command ):
   '''
-    Downtime "master" Command.    
+    Downtime "main" Command.    
   '''
 
   def __init__( self, args = None, clients = None ):
@@ -102,9 +102,9 @@ class DowntimeCommand( Command ):
              
     return S_OK( ( element, elementName, hours ) )
 
-  def doNew( self, masterParams = None ):
+  def doNew( self, mainParams = None ):
     '''
-      Gets the parameters to run, either from the master method or from its
+      Gets the parameters to run, either from the main method or from its
       own arguments.
       
       For every elementName, unless it is given a list, in which case it contacts 
@@ -114,8 +114,8 @@ class DowntimeCommand( Command ):
       If there are downtimes, are recorded and then returned.
     '''
     
-    if masterParams is not None:
-      element, elementNames = masterParams
+    if mainParams is not None:
+      element, elementNames = mainParams
       hours       = None
       elementName = None
     else:
@@ -226,9 +226,9 @@ class DowntimeCommand( Command ):
            
     return S_OK( result )       
 
-  def doMaster( self ):
+  def doMain( self ):
     '''
-      Master method, which looks little bit spaguetti code, sorry !
+      Main method, which looks little bit spaguetti code, sorry !
       - It gets all sites and transforms them into gocSites.
       - It gets all the storage elements and transforms them into their hosts
       - It gets the fts, the ces and file catalogs.

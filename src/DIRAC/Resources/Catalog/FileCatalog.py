@@ -93,13 +93,13 @@ class FileCatalog:
       return res
     fileInfo = res['Value']
     allLfns = fileInfo.keys()
-    for catalogName, oCatalog, master in self.writeCatalogs:
+    for catalogName, oCatalog, main in self.writeCatalogs:
       method = getattr( oCatalog, self.call )
       res = method( fileInfo, **kws )
       if not res['OK']:
-        if master:
-          # If this is the master catalog and it fails we dont want to continue with the other catalogs
-          gLogger.error( "FileCatalog.w_execute: Failed to execute %s on master catalog %s." % ( self.call, catalogName ), res['Message'] )
+        if main:
+          # If this is the main catalog and it fails we dont want to continue with the other catalogs
+          gLogger.error( "FileCatalog.w_execute: Failed to execute %s on main catalog %s." % ( self.call, catalogName ), res['Message'] )
           return res
         else:
           # Otherwise we keep the failed catalogs so we can update their state later
@@ -110,8 +110,8 @@ class FileCatalog:
           if not failed.has_key( lfn ):
             failed[lfn] = {}
           failed[lfn][catalogName] = message
-          if master:
-            # If this is the master catalog then we should not attempt the operation on other catalogs
+          if main:
+            # If this is the main catalog then we should not attempt the operation on other catalogs
             fileInfo.pop( lfn )
         for lfn, result in res['Value']['Successful'].items():
           # Save the result return for each file for the successful operations
@@ -132,7 +132,7 @@ class FileCatalog:
     """
     successful = {}
     failed = {}
-    for _catalogName, oCatalog, _master in self.readCatalogs:
+    for _catalogName, oCatalog, _main in self.readCatalogs:
       method = getattr( oCatalog, self.call )
       res = method( *parms, **kws )
       if res['OK']:
@@ -160,7 +160,7 @@ class FileCatalog:
   # Below is the method for obtaining the objects instantiated for a provided catalogue configuration
   #
 
-  def addCatalog( self, catalogName, mode = "Write", master = False ):
+  def addCatalog( self, catalogName, mode = "Write", main = False ):
     """ Add a new catalog with catalogName to the pool of catalogs in mode:
         "Read","Write" or "ReadWrite"
     """
@@ -171,9 +171,9 @@ class FileCatalog:
 
     oCatalog = result['Value']
     if mode.lower().find( "read" ) != -1:
-      self.readCatalogs.append( ( catalogName, oCatalog, master ) )
+      self.readCatalogs.append( ( catalogName, oCatalog, main ) )
     if mode.lower().find( "write" ) != -1:
-      self.writeCatalogs.append( ( catalogName, oCatalog, master ) )
+      self.writeCatalogs.append( ( catalogName, oCatalog, main ) )
 
     return S_OK()
 
@@ -184,13 +184,13 @@ class FileCatalog:
     catalog_removed = False
 
     for i in range( len( self.readCatalogs ) ):
-      catalog, _object, _master = self.readCatalogs[i]
+      catalog, _object, _main = self.readCatalogs[i]
       if catalog == catalogName:
         del self.readCatalogs[i]
         catalog_removed = True
         break
     for i in range( len( self.writeCatalogs ) ):
-      catalog, _object, _master = self.writeCatalogs[i]
+      catalog, _object, _main = self.writeCatalogs[i]
       if catalog == catalogName:
         del self.writeCatalogs[i]
         catalog_removed = True
@@ -245,19 +245,19 @@ class FileCatalog:
         if not res['OK']:
           return res
         oCatalog = res['Value']
-        master = catalogConfig['Master']
+        main = catalogConfig['Main']
         # If the catalog is read type
         if re.search( 'Read', catalogConfig['AccessType'] ):
-          if master:
-            self.readCatalogs.insert( 0, ( catalogName, oCatalog, master ) )
+          if main:
+            self.readCatalogs.insert( 0, ( catalogName, oCatalog, main ) )
           else:
-            self.readCatalogs.append( ( catalogName, oCatalog, master ) )
+            self.readCatalogs.append( ( catalogName, oCatalog, main ) )
         # If the catalog is write type
         if re.search( 'Write', catalogConfig['AccessType'] ):
-          if master:
-            self.writeCatalogs.insert( 0, ( catalogName, oCatalog, master ) )
+          if main:
+            self.writeCatalogs.insert( 0, ( catalogName, oCatalog, main ) )
           else:
-            self.writeCatalogs.append( ( catalogName, oCatalog, master ) )
+            self.writeCatalogs.append( ( catalogName, oCatalog, main ) )
     return S_OK()
 
   def _getCatalogConfigDetails( self, catalogName ):
@@ -283,13 +283,13 @@ class FileCatalog:
       errStr = "FileCatalog._getCatalogConfigDetails: Required option 'AccessType' not defined."
       gLogger.error( errStr, catalogName )
       return S_ERROR( errStr )
-    # Anything other than 'True' in the 'Master' option means it is not
-    if not catalogConfig.has_key( 'Master' ):
-      catalogConfig['Master'] = False
-    elif catalogConfig['Master'] == 'True':
-      catalogConfig['Master'] = True
+    # Anything other than 'True' in the 'Main' option means it is not
+    if not catalogConfig.has_key( 'Main' ):
+      catalogConfig['Main'] = False
+    elif catalogConfig['Main'] == 'True':
+      catalogConfig['Main'] = True
     else:
-      catalogConfig['Master'] = False
+      catalogConfig['Main'] = False
     return S_OK( catalogConfig )
 
   def _generateCatalogObject( self, catalogName ):

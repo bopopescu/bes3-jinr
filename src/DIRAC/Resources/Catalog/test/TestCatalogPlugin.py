@@ -223,7 +223,7 @@ class FileTestCase(CatalogPlugInTestCase):
     registrationDict[self.files[0][:-1]] = {'SE':'DIRAC-storage3','PFN':'protocol3://host:port/storage/path%s' % self.files[0]}
     res = self.catalog.addReplica(registrationDict)
     error = self.parseError(res,self.files[0][:-1])
-    # TODO When the master fails it should return an error in FileCatalog
+    # TODO When the main fails it should return an error in FileCatalog
     #self.assertEqual(error,"No such file or directory")
 
   def test_setReplicaStatus(self):
@@ -254,7 +254,7 @@ class FileTestCase(CatalogPlugInTestCase):
     lfnDict[self.files[0][:-1]] = {'PFN': 'protocol://host:port/storage/path%s' % self.files[0][:-1],'SE':'DIRAC-storage' ,'Status':'U'}
     res = self.catalog.setReplicaStatus(lfnDict)
     error = self.parseError(res,self.files[0][:-1])  
-    # TODO When the master fails it should return an error in FileCatalog 
+    # TODO When the main fails it should return an error in FileCatalog 
     #self.assertEqual(error,"No such file or directory")
 
   def test_setReplicaHost(self):
@@ -274,7 +274,7 @@ class FileTestCase(CatalogPlugInTestCase):
     lfnDict[self.files[0][:-1]] = {'PFN': 'protocol://host:port/storage/path%s' % self.files[0][:-1],'SE':'DIRAC-storage' ,'NewSE':'DIRAC-storage2'}
     res = self.catalog.setReplicaHost(lfnDict)
     error = self.parseError(res,self.files[0][:-1])
-    # TODO When the master fails it should return an error in FileCatalog
+    # TODO When the main fails it should return an error in FileCatalog
     #self.assertEqual(error,"No such file or directory")
 
 class DirectoryTestCase(CatalogPlugInTestCase):

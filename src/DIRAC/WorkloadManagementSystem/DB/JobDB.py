@@ -66,7 +66,7 @@ JOB_FINAL_STATES = ['Done', 'Completed', 'Failed']
 
 JOB_DEPRECATED_ATTRIBUTES = [ 'UserPriority', 'SystemPriority' ]
 
-JOB_STATIC_ATTRIBUTES = [ 'JobID', 'JobType', 'DIRACSetup', 'JobGroup', 'JobSplitType', 'MasterJobID',
+JOB_STATIC_ATTRIBUTES = [ 'JobID', 'JobType', 'DIRACSetup', 'JobGroup', 'JobSplitType', 'MainJobID',
                           'JobName', 'Owner', 'OwnerDN', 'OwnerGroup', 'SubmissionTime', 'VerifiedFlag' ]
 
 JOB_VARIABLE_ATTRIBUTES = [ 'Site', 'RescheduleTime', 'StartExecTime', 'EndExecTime', 'RescheduleCounter',
@@ -1396,12 +1396,12 @@ class JobDB( DB ):
     else:
       jobIDList = jobIDs
 
-    # If this is a master job delete the children first
+    # If this is a main job delete the children first
     failedSubjobList = []
     for jobID in jobIDList:
       result = self.getJobAttribute( jobID, 'JobSplitType' )
       if result['OK']:
-        if result['Value'] == "Master":
+        if result['Value'] == "Main":
           result = self.getSubjobs( jobID )
           if result['OK']:
             subjobs = result['Value']

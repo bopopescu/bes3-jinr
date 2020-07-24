@@ -42,8 +42,8 @@ class ProcessMonitor:
     """Returns the CPU consumed given a PID assuming a proc file system exists.
     """
     pid = str( pid )
-    masterProcPath = '/proc/%s/stat' % ( pid )
-    if not os.path.exists( masterProcPath ):
+    mainProcPath = '/proc/%s/stat' % ( pid )
+    if not os.path.exists( mainProcPath ):
       return S_ERROR( 'Process %s does not exist' % ( pid ) )
 
     #Get the current process list
